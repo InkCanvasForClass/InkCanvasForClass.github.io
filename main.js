@@ -108,14 +108,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function convertDownloadUrl(url, isBeta = false) {
+        // 如果是 .exe 文件，强制走镜像源
+        if (url.endsWith('.exe')) {
+            if (fastestMirror && url.startsWith("https://github.com/")) {
+                return url.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
+            }
+            return url;
+        }
+        // 智教优先（非 .exe）
         if (smartTeachAvailable) {
             return buildSmartTeachUrl(url, isBeta);
         }
-        
         if (fastestMirror && url.startsWith("https://github.com/")) {
             return url.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
         }
-        
         return url;
     }
 
