@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document。addEventListener("DOMContentLoaded", function () {
     // --- 弹窗相关元素创建 ---
     function createDownloadModal() {
         const modal = document.createElement('div');
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p class="typescale-body-medium" style="margin-bottom: 0">如果没有开始，请 <a id="manual-download" href="#" class="link">单击此处</a></p>
                     <div class="help-section">
                         <span class="material-symbols-outlined">help</span>
-                        <span>第一次使用？<a id="docs-link" href="https://inkcanvasforclass.github.io/website" target="_blank" class="link">看看这个！</a></span>
+                        <span>第一次使用？<a id="docs-link" href="https://inkcanvasforclass.github.io/website/guide/getting-started" target="_blank" class="link">看看这个！</a></span>
                     </div>
                 </div>
             </div>
