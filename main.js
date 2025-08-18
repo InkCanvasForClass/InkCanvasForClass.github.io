@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded"， function () {
+document.addEventListener("DOMContentLoaded", function () {
     // --- 弹窗相关元素创建 ---
     function createDownloadModal() {
         const modal = document.createElement('div');
