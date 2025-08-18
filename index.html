@@ -282,6 +282,28 @@
     </footer>
 
     <script src="./main.js"></script>
+    <!-- 下载弹窗 HTML结构 -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="typescale-title-large">感谢下载</h2>
+                <button id="close-modal" class="btn btn--icon">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="thank-you-text" class="typescale-body-large">感谢您下载 InkCanvasforClass-Community</p>
+                <p class="typescale-body-medium">您的下载将会在 <span id="countdown" class="countdown-number">5</span> 秒钟后开始</p>
+                <p id="manual-download-tip" class="typescale-body-medium" style="margin-bottom: 0; display: none;">
+                    如果没有开始，请 <a id="manual-download" href="#" class="link">单击此处</a>
+                </p>
+                <div class="help-section">
+                    <span class="material-symbols-outlined">help</span>
+                    <span>第一次使用？<a id="docs-link" href="https://inkcanvasforclass.github.io/website/guide/getting-started" target="_blank" class="link">看看这个！</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

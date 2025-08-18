@@ -1,145 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // --- 弹窗相关元素创建 ---
-    function createDownloadModal() {
-        const modal = document.createElement('div');
-        modal.id = 'download-modal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="typescale-title-large">感谢下载</h2>
-                    <button id="close-modal" class="btn btn--icon">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="thank-you-text" class="typescale-body-large">感谢您下载 InkCanvasforClass-Community</p>
-                    <p class="typescale-body-medium">您的下载将会在 <span id="countdown" class="countdown-number">5</span> 秒钟后开始</p>
-                    <p class="typescale-body-medium" style="margin-bottom: 0">如果没有开始，请 <a id="manual-download" href="#" class="link">单击此处</a></p>
-                    <div class="help-section">
-                        <span class="material-symbols-outlined">help</span>
-                        <span>第一次使用？<a id="docs-link" href="https://inkcanvasforclass.github.io/website/guide/getting-started" target="_blank" class="link">看看这个！</a></span>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-
-    // 创建弹窗CSS样式
-function createModalStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .modal.is-open {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-content {
-            background: var(--md-sys-color-surface-container);
-            border-radius: 1rem;
-            padding: 0 1.5rem 1.5rem; /* 增加水平方向的内边距 */
-            max-width: 480px;
-            width: 100%;
-            box-shadow: var(--md-sys-elevation-level3);
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-        
-        .modal.is-open .modal-content {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding: 1.5rem 0 0.75rem; /* 调整标题区域的内边距 */
-            border-bottom: 1px solid var(--md-sys-color-outline-variant);
-        }
-        
-        .modal-body {
-            padding: 0 1rem; /* 主要内容区域两侧增加内边距 */
-        }
-        
-        .countdown-number {
-            font-weight: bold;
-            color: var(--md-sys-color-primary);
-        }
-        
-        .help-section {
-            margin-top: 1.5rem;
-            padding: 1rem; /* 帮助区域增加内边距 */
-            background: var(--md-sys-color-surface-container-high);
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .link {
-            text-decoration: underline;
-            color: var(--md-sys-color-primary);
-            font-weight: 600;
-        }
-        
-        /* 移动端优化 */
-        @media (max-width: 480px) {
-            .modal-content {
-                margin: 0 1rem; /* 在小屏幕上两侧留出更多空间 */
-                padding: 0 1rem 1rem; /* 调整内边距 */
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-
-    createModalStyles();
-    createDownloadModal();
-
-    // --- 常量与状态 ---
-    const SMART_TEACH_DOMAIN = "https://get.smart-teach.cn";
-    const COMMUNITY_PATH = "/d/Ningbo-S3/shared/jiangling/community";
-    const COMMUNITY_BETA_PATH = "/d/Ningbo-S3/shared/jiangling/community-beta";
-    const GITHUB_REPO_COMMUNITY = "InkCanvasForClass/community";
-    const GITHUB_REPO_COMMUNITY_BETA = "InkCanvasForClass/community-beta";
-    const GITHUB_API_BASE = "https://api.github.com/repos/";
-    const MIRROR_URLS = [
-        "https://gh.llkk.cc",
-        "https://ghfile.geekertao.top",
-        "https://gh.dpik.top",
-        "https://github.dpik.top",
-        "https://github.acmsz.top",
-        "https://git.yylx.win"
-    ];
-
-    let fastestMirror = null;
-    let releasesOfficial = [];
-    let releasesBeta = [];
-    let currentReleases = [];
-    let currentIndex = 0;
-    let showingBeta = false;
-    let smartTeachAvailable = false;
-
     // --- DOM元素 ---
     const elements = {
         // 主题
@@ -168,11 +27,36 @@ function createModalStyles() {
         // 弹窗
         downloadModal: document.getElementById("download-modal"),
         manualDownload: document.getElementById("manual-download"),
+        manualDownloadTip: document.getElementById("manual-download-tip"),
         thankYouText: document.getElementById("thank-you-text"),
         countdown: document.getElementById("countdown"),
         docsLink: document.getElementById("docs-link"),
         closeModal: document.getElementById("close-modal")
     };
+
+    // --- 常量与状态 ---
+    const SMART_TEACH_DOMAIN = "https://get.smart-teach.cn";
+    const COMMUNITY_PATH = "/d/Ningbo-S3/shared/jiangling/community";
+    const COMMUNITY_BETA_PATH = "/d/Ningbo-S3/shared/jiangling/community-beta";
+    const GITHUB_REPO_COMMUNITY = "InkCanvasForClass/community";
+    const GITHUB_REPO_COMMUNITY_BETA = "InkCanvasForClass/community-beta";
+    const GITHUB_API_BASE = "https://api.github.com/repos/";
+    const MIRROR_URLS = [
+        "https://gh.llkk.cc",
+        "https://ghfile.geekertao.top",
+        "https://gh.dpik.top",
+        "https://github.dpik.top",
+        "https://github.acmsz.top",
+        "https://git.yylx.win"
+    ];
+
+    let fastestMirror = null;
+    let releasesOfficial = [];
+    let releasesBeta = [];
+    let currentReleases = [];
+    let currentIndex = 0;
+    let showingBeta = false;
+    let smartTeachAvailable = false;
 
     // --- API与镜像处理 ---
     function buildApiUrls(endpoint) {
@@ -352,27 +236,48 @@ function createModalStyles() {
     function showDownloadModal(downloadUrl, version) {
         let countdownValue = 5;
         let countdownInterval;
-        let downloadSource = smartTeachAvailable ? "国内镜像" : "GitHub镜像";
         let manualDownloadStarted = false;
-        
+
         // 更新显示内容
         elements.thankYouText.textContent = `感谢您下载 InkCanvasforClass-Community (${version})`;
         elements.countdown.textContent = countdownValue;
         elements.manualDownload.href = downloadUrl;
         elements.manualDownload.textContent = "单击此处下载";
         elements.docsLink.href = "https://inkcanvasforclass.github.io/website";
-        
+        elements.manualDownloadTip.style.display = "none";
+
         // 显示弹窗
         elements.downloadModal.classList.add('is-open');
-        
-        // 开始倒计时
+
+        // 倒计时逻辑
         countdownInterval = setInterval(() => {
             countdownValue--;
             elements.countdown.textContent = countdownValue;
-            
-            if (countdownValue <= 0 && !manualDownloadStarted) {
+
+            if (countdownValue <= 0) {
                 clearInterval(countdownInterval);
                 // 自动下载
+                if (!manualDownloadStarted) {
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = '';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+                // 显示手动下载提示
+                elements.manualDownloadTip.style.display = "";
+            }
+        }, 1000);
+
+        // 只绑定一次事件
+        if (!elements.manualDownload._binded) {
+            elements.manualDownload.addEventListener('click', function(e) {
+                e.preventDefault();
+                manualDownloadStarted = true;
+                clearInterval(countdownInterval);
+
                 const a = document.createElement('a');
                 a.href = downloadUrl;
                 a.download = '';
@@ -380,39 +285,20 @@ function createModalStyles() {
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                
-                // 3秒后关闭弹窗
-                setTimeout(() => {
-                    elements.downloadModal.classList.remove('is-open');
-                }, 3000);
-            }
-        }, 1000);
-        
-        // 手动下载处理
-        elements.manualDownload.addEventListener('click', function(e) {
-            e.preventDefault();
-            manualDownloadStarted = true;
-            clearInterval(countdownInterval);
-            
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = '';
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            // 关闭弹窗
-            setTimeout(() => {
+
+                // 关闭弹窗
                 elements.downloadModal.classList.remove('is-open');
-            }, 1500);
-        });
-        
-        // 关闭按钮
-        elements.closeModal.addEventListener('click', function() {
-            clearInterval(countdownInterval);
-            elements.downloadModal.classList.remove('is-open');
-        });
+            });
+            elements.manualDownload._binded = true;
+        }
+
+        if (!elements.closeModal._binded) {
+            elements.closeModal.addEventListener('click', function() {
+                clearInterval(countdownInterval);
+                elements.downloadModal.classList.remove('is-open');
+            });
+            elements.closeModal._binded = true;
+        }
     }
 
     // 下载按钮事件监听
