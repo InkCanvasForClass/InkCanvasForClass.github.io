@@ -497,6 +497,11 @@ img {
     flex-wrap: wrap;
 }
 
+.release-item-actions .download-btn {
+    flex: 1;
+    min-width: 200px;
+}
+
 /* Features Section */
 .feature-card {
     display: flex;
