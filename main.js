@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentIndex = 0;
     let showingBeta = false;
     let smartTeachAvailable = false;
+    let smartTeachDownloadAvailable = false;
 
     // --- API与镜像处理 ---
     function buildApiUrls(endpoint) {
@@ -74,9 +75,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 提取版本号
     function extractVersionFromUrl(url) {
-        const regex = /InkCanvasForClass\.CE\.(\d+\.\d+\.\d+\.\d+)\.zip/;
+        // 匹配 .zip 或 .exe 文件中的版本号
+        const regex = /InkCanvasForClass\.CE\.(\d+\.\d+\.\d+\.\d+)\.(zip|exe)/;
         const match = url.match(regex);
         return match ? match[1] : null;
+    }
+
+    // 判断是否为测试版（基于发布日期分界）
+    function isBetaRelease(release, isBetaRepo) {
+        // 2025/12/1 作为分界日期
+        const boundaryDate = new Date('2025-12-01T00:00:00Z');
+        const releaseDate = new Date(release.published_at);
+        
+        if (releaseDate < boundaryDate) {
+            // 2025/12/1 之前：根据仓库判断
+            return isBetaRepo;
+        } else {
+            // 2025/12/1 及之后：版本号 < 1.7.18.0 时根据仓库判断，>= 1.7.18.0 时全部为测试版
+            const versionMatch = release.tag_name.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)/);
+            if (versionMatch) {
+                const [, major, minor, patch, build] = versionMatch.map(Number);
+                // 比较 1.7.18.0
+                if (major < 1 || (major === 1 && minor < 7) || (major === 1 && minor === 7 && patch < 18)) {
+                    return isBetaRepo;
+                } else {
+                    return true; // >= 1.7.18.0 全部为测试版
+                }
+            }
+            return isBetaRepo;
+        }
     }
 
     // 测试智教下载源的可用性
@@ -108,21 +135,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function convertDownloadUrl(url, isBeta = false) {
-        // 如果是 .exe 文件，强制走镜像源
+        // .exe 文件强制走最快 GitHub 镜像源
         if (url.endsWith('.exe')) {
             if (fastestMirror && url.startsWith("https://github.com/")) {
                 return url.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
             }
             return url;
         }
-        // 智教优先（非 .exe）
-        if (smartTeachAvailable) {
-            return buildSmartTeachUrl(url, isBeta);
+        
+        // .zip 文件优先尝试使用智教联盟，如果不可用则使用 GitHub 镜像
+        if (url.endsWith('.zip')) {
+            // 如果智教联盟可用，返回智教联盟URL供后续检查
+            if (smartTeachAvailable) {
+                return buildSmartTeachUrl(url, isBeta);
+            }
+            // 智教不可用，使用最快 GitHub 镜像
+            if (fastestMirror && url.startsWith("https://github.com/")) {
+                return url.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
+            }
         }
-        if (fastestMirror && url.startsWith("https://github.com/")) {
-            return url.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
-        }
+        
         return url;
+    }
+
+    // 检查智教联盟中文件是否存在
+    async function checkSmartTeachFileExists(url, isBeta = false) {
+        try {
+            const fileName = url.split('/').pop();
+            const basePath = isBeta ? COMMUNITY_BETA_PATH : COMMUNITY_PATH;
+            const testUrl = `${SMART_TEACH_DOMAIN}${basePath}/${fileName}`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
+            const response = await fetch(testUrl, {
+                method: 'HEAD',
+                signal: controller.signal,
+                cache: 'no-store'
+            });
+            
+            clearTimeout(timeoutId);
+            // 302 Found 或 403 Forbidden 都认为文件存在
+            return response.status === 302 || response.status === 403 || response.status === 200;
+        } catch (e) {
+            return false;
+        }
     }
 
     async function fetchDataWithMirrors(urls, errorMessage = "获取数据失败") {
@@ -186,13 +243,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const r = currentReleases[idx];
         const assetsHtml = r.assets
             .map(a => {
-                // 提取原始下载URL的版本号
-                const version = extractVersionFromUrl(a.browser_download_url);
+                // 提取原始下载URL的版本号，如果失败则使用 tag_name
+                const version = extractVersionFromUrl(a.browser_download_url) || r.tag_name;
                 const downloadUrl = convertDownloadUrl(a.browser_download_url, r._isBeta);
                 return `
                     <button data-download-url="${downloadUrl}" 
                             data-original-url="${a.browser_download_url}" 
                             data-version="${version}"
+                            data-is-beta="${r._isBeta}"
                             class="btn btn--tonal download-btn">
                         <span class="material-symbols-outlined">download</span>
                         <span>${a.name} (${(a.size / 1024 / 1024).toFixed(2)} MB)</span>
@@ -309,16 +367,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 下载按钮事件监听
     function handleDownloadBtnClick() {
-        elements.releaseList.addEventListener('click', function(e) {
+        elements.releaseList.addEventListener('click', async function(e) {
             const downloadBtn = e.target.closest('.download-btn');
             if (downloadBtn) {
                 e.preventDefault();
                 const downloadUrl = downloadBtn.getAttribute('data-download-url');
                 const version = downloadBtn.getAttribute('data-version') || '最新版';
                 const originalUrl = downloadBtn.getAttribute('data-original-url');
+                const isBeta = downloadBtn.getAttribute('data-is-beta') === 'true';
                 
-                // 如果智教不可达，使用原URL
-                const effectiveUrl = smartTeachAvailable ? downloadUrl : originalUrl;
+                let effectiveUrl = originalUrl;
+                
+                // 对于 .zip 文件，如果智教可用，先检查文件是否存在
+                if (originalUrl.endsWith('.zip') && smartTeachAvailable) {
+                    const exists = await checkSmartTeachFileExists(originalUrl, isBeta);
+                    if (exists) {
+                        effectiveUrl = downloadUrl;
+                    } else if (fastestMirror) {
+                        // 文件不存在，使用最快镜像
+                        effectiveUrl = originalUrl.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
+                    }
+                } else if (originalUrl.endsWith('.exe') && fastestMirror) {
+                    // .exe 文件使用最快镜像
+                    effectiveUrl = originalUrl.replace("https://github.com/", `${fastestMirror}/https://github.com/`);
+                }
+                
                 showDownloadModal(effectiveUrl, version);
             }
         });
@@ -383,10 +456,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 releasesBeta = await fetchDataWithMirrors(betaUrls, "Beta 版本获取失败") || [];
             }
             
-            const allReleases = [...releasesOfficial.map(r => ({...r, _isBeta: false})), ...releasesBeta.map(r => ({...r, _isBeta: true}))];
+            // 为发行版设置 _isBeta 标志（基于发布日期分界）
+            const allReleases = [
+                ...releasesOfficial.map(r => ({
+                    ...r,
+                    _isBeta: isBetaRelease(r, false)
+                })),
+                ...releasesBeta.map(r => ({
+                    ...r,
+                    _isBeta: isBetaRelease(r, true)
+                }))
+            ];
             const sortedReleases = allReleases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
             
-            currentReleases = showingBeta ? sortedReleases : releasesOfficial;
+            currentReleases = showingBeta ? sortedReleases : allReleases.filter(r => !r._isBeta);
             
             currentIndex = 0;
             elements.releaseLoading.style.display = 'none';
@@ -429,7 +512,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const releaseUrls = buildApiUrls(`${GITHUB_REPO_COMMUNITY}/releases`);
         releasesOfficial = await fetchDataWithMirrors(releaseUrls, "正式版本获取失败") || [];
         
-        currentReleases = releasesOfficial;
+        // 为发行版设置 _isBeta 标志（基于发布日期分界）
+        const processedReleases = releasesOfficial.map(r => ({
+            ...r,
+            _isBeta: isBetaRelease(r, false)
+        }));
+        
+        currentReleases = processedReleases;
         currentIndex = 0;
 
         elements.releaseLoading.style.display = 'none';
