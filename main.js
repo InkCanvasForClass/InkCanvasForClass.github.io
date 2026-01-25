@@ -83,18 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 判断是否为测试版（基于版本号和prerelease标志）
     function isBetaRelease(release, isBetaRepo) {
-        // 先检查版本号
-        const versionMatch = release.tag_name.match(/(\d+)\.(\d+)\.(\d+)/);
-        if (versionMatch) {
-            const [, major, minor, patch] = versionMatch.map(Number);
-            // 版本 >= 1.7.18.0：根据 prerelease 标志判断
-            if ((major > 1) || (major === 1 && minor > 7) || (major === 1 && minor === 7 && patch >= 18)) {
-                return release.prerelease; // prerelease = true 为测试版，false 为正式版
-            }
-        }
-        
-        // 版本 < 1.7.18.0：根据仓库判断
-        return isBetaRepo;
+        // 忽略测试版仓库，所有正式版仓库里的Release属于正式版，Pre-Release属于测试版
+        return release.prerelease;
     }
 
     // 测试智教下载源的可用性
@@ -232,7 +222,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     
         const r = currentReleases[idx];
-        const assetsHtml = r.assets
+        console.log('rendering release:', r.tag_name, 'isBeta:', r._isBeta);
+        console.log('assets:', r.assets.map(a => a.name));
+        const filteredAssets = r.assets.filter(a => !a.name.endsWith('.sigstore.json'));
+        console.log('filtered assets:', filteredAssets.map(a => a.name));
+        const assetsHtml = filteredAssets
             .map(a => {
                 // 提取原始下载URL的版本号，如果失败则使用 tag_name
                 const version = extractVersionFromUrl(a.browser_download_url) || r.tag_name;
@@ -453,26 +447,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 ? `<span class="material-symbols-outlined">verified</span><span>显示正式版</span>`
                 : `<span class="material-symbols-outlined">science</span><span>显示测试版</span>`;
 
-            if (showingBeta && releasesBeta.length === 0) {
-                updateLoadingText("正在获取 Beta 版本...");
-                const betaUrls = buildApiUrls(`${GITHUB_REPO_COMMUNITY_BETA}/releases`);
-                releasesBeta = await fetchDataWithMirrors(betaUrls, "Beta 版本获取失败") || [];
+            if (showingBeta) {
+                // 显示测试版
+                currentReleases = releasesOfficial.filter(r => r.prerelease).map(r => ({...r, _isBeta: true})).sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+            } else {
+                // 显示正式版
+                currentReleases = releasesOfficial.filter(r => !r.prerelease).map(r => ({...r, _isBeta: false}));
             }
-            
-            // 为发行版设置 _isBeta 标志（基于发布日期分界）
-            const allReleases = [
-                ...releasesOfficial.map(r => ({
-                    ...r,
-                    _isBeta: isBetaRelease(r, false)
-                })),
-                ...releasesBeta.map(r => ({
-                    ...r,
-                    _isBeta: isBetaRelease(r, true)
-                }))
-            ];
-            const sortedReleases = allReleases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
-            
-            currentReleases = showingBeta ? sortedReleases : allReleases.filter(r => !r._isBeta);
             
             currentIndex = 0;
             elements.releaseLoading.style.display = 'none';
