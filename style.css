@@ -553,6 +553,8 @@ img {
 }
 #contributors table td img {
     display: inline-block;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 
