@@ -60,9 +60,23 @@ html.dark {
 .segmented-btn--beta .material-symbols-outlined { color: var(--icc-beta); }
 .segmented-btn--nightly .material-symbols-outlined { color: var(--icc-nightly); }
 
-.segmented-btn.is-active .segmented-btn-badge {
-    background-color: currentColor;
-    color: var(--md-sys-color-surface);
+/* 「推荐」角标固定使用所属通道的深/浅配对色，
+   这样在选中（通道底色）与未选中（灰底）两种状态下对比度都足够 */
+.segmented-btn--stable .segmented-btn-badge {
+    background-color: var(--icc-stable);
+    color: var(--icc-stable-bg);
+}
+.segmented-btn--preview .segmented-btn-badge {
+    background-color: var(--icc-preview);
+    color: var(--icc-preview-bg);
+}
+.segmented-btn--beta .segmented-btn-badge {
+    background-color: var(--icc-beta);
+    color: var(--icc-beta-bg);
+}
+.segmented-btn--nightly .segmented-btn-badge {
+    background-color: var(--icc-nightly);
+    color: var(--icc-nightly-bg);
 }
 
 @media (max-width: 560px) {
