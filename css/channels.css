@@ -15,16 +15,18 @@
 }
 
 html.dark {
-    /* 深色下不用高亮度粉彩，压暗一档，避免大面积色块刺眼 */
+    /* 深色下不用高亮度粉彩，压暗一档，避免大面积色块刺眼；
+       底色需贴近接近纯黑的页面背景（见 tokens.css），只保留极淡的色相倾向 */
     --icc-stable: #6fb87c;
-    --icc-stable-bg: #16281a;
+    --icc-stable-bg: #0e1a11;
     --icc-preview: #7aa9dd;
-    --icc-preview-bg: #131f2e;
+    --icc-preview-bg: #0c141d;
     --icc-beta: #a98fdc;
-    --icc-beta-bg: #1f1830;
+    --icc-beta-bg: #14101f;
     --icc-nightly: #d98d85;
-    --icc-nightly-bg: #2e1614;
+    --icc-nightly-bg: #1c0e0d;
 }
+
 
 
 /* ---------- 通道切换按钮 ---------- */

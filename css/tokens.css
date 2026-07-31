@@ -72,18 +72,20 @@ html.dark {
     --md-sys-color-on-error: #690005;
     --md-sys-color-error-container: #93000a;
     --md-sys-color-on-error-container: #ffdad6;
-    --md-sys-color-background: #1a1c1e;
+    /* 深色底整体压到接近纯黑，层级之间只拉开很小的明度差 */
+    --md-sys-color-background: #0a0b0c;
     --md-sys-color-on-background: #e2e2e6;
-    --md-sys-color-surface: #1a1c1e;
+    --md-sys-color-surface: #0a0b0c;
     --md-sys-color-on-surface: #e2e2e6;
-    --md-sys-color-surface-variant: #42474e;
-    --md-sys-color-on-surface-variant: #c2c7cf;
-    --md-sys-color-outline: #8c9199;
-    --md-sys-color-outline-variant: #42474e;
+    --md-sys-color-surface-variant: #2a2d31;
+    --md-sys-color-on-surface-variant: #b3b8c0;
+    --md-sys-color-outline: #6b7078;
+    --md-sys-color-outline-variant: #2a2d31;
     --md-sys-color-shadow: #000000;
-    --md-sys-color-surface-container-lowest: #141619;
-    --md-sys-color-surface-container-low: #1a1c1e;
-    --md-sys-color-surface-container: #1e2022;
-    --md-sys-color-surface-container-high: #282b2d;
-    --md-sys-color-surface-container-highest: #333638;
+    --md-sys-color-surface-container-lowest: #000000;
+    --md-sys-color-surface-container-low: #101113;
+    --md-sys-color-surface-container: #141517;
+    --md-sys-color-surface-container-high: #1a1c1e;
+    --md-sys-color-surface-container-highest: #212326;
+
 }

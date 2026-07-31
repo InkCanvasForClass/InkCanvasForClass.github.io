@@ -160,8 +160,11 @@
 .md-alert--warning { --md-alert-color: #b26a00; }
 .md-alert--caution { --md-alert-color: #b3261e; }
 
-html.dark .md-alert--note { --md-alert-color: #9ecbff; }
-html.dark .md-alert--tip { --md-alert-color: #8fd99a; }
-html.dark .md-alert--important { --md-alert-color: #cdb4ff; }
-html.dark .md-alert--warning { --md-alert-color: #ffcf7a; }
-html.dark .md-alert--caution { --md-alert-color: #ffb4ab; }
+/* 深色下与通道色板保持同一档亮度，避免比接近纯黑的背景反差过大 */
+html.dark .md-alert--note { --md-alert-color: #7aa9dd; }
+html.dark .md-alert--tip { --md-alert-color: #6fb87c; }
+html.dark .md-alert--important { --md-alert-color: #a98fdc; }
+html.dark .md-alert--warning { --md-alert-color: #d9ab5e; }
+html.dark .md-alert--caution { --md-alert-color: #d98d85; }
+
+
