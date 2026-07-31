@@ -1,0 +1,204 @@
+/* ===========================================================
+   下载弹窗：普通倒计时弹窗 + 危险确认弹窗（Nightly / Debug）
+   =========================================================== */
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.modal.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: var(--md-sys-color-surface-container);
+    border-radius: 1rem;
+    padding: 0 1.5rem 1.5rem;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: var(--md-sys-elevation-level3, 0 4px 24px rgba(0,0,0,0.12));
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+.modal.is-open .modal-content {
+    transform: translateY(0);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1.5rem 0 0.75rem;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+.modal-body {
+    padding: 0 1rem;
+}
+.countdown-number {
+    font-weight: bold;
+    color: var(--md-sys-color-primary);
+}
+.help-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.link {
+    text-decoration: underline;
+    color: var(--md-sys-color-primary);
+    font-weight: 600;
+}
+
+/* ---------- 弹窗内的版本 / 文件信息 ---------- */
+.modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0 0.75rem;
+}
+.modal-file {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.75rem;
+    word-break: break-all;
+    color: var(--md-sys-color-on-surface-variant);
+}
+#modal-warning { margin: 0.75rem 0; }
+
+/* ---------- 危险确认弹窗（Nightly / Debug 构建） ---------- */
+.modal--danger {
+    background-color: rgba(0, 0, 0, 0.65);
+}
+.modal--danger .modal-content {
+    border: 2px solid var(--md-sys-color-error);
+    box-shadow: 0 4px 32px color-mix(in srgb, var(--md-sys-color-error), transparent 65%);
+    animation: danger-pop 0.28s ease-out;
+}
+.modal--danger .modal-header {
+    border-bottom-color: var(--md-sys-color-error);
+}
+.modal--danger .modal-header h2 {
+    color: var(--md-sys-color-error);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.modal--danger .modal-header h2::before {
+    content: "report";
+    font-family: "Material Symbols Outlined";
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-feature-settings: "liga";
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+}
+@keyframes danger-pop {
+    0%   { transform: scale(0.94); }
+    60%  { transform: scale(1.01); }
+    100% { transform: scale(1); }
+}
+
+.modal-confirm {
+    margin-top: 1rem;
+}
+.confirm-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--md-sys-color-error);
+    background: color-mix(in srgb, var(--md-sys-color-error-container), transparent 55%);
+    cursor: pointer;
+    user-select: none;
+}
+.confirm-check:hover {
+    background: color-mix(in srgb, var(--md-sys-color-error-container), transparent 30%);
+}
+
+/* 冷却期间：勾选框整体置灰且不可点击 */
+.confirm-check.is-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--md-sys-color-outline);
+    background: transparent;
+}
+
+.confirm-check.is-locked:hover {
+    background: transparent;
+}
+
+.confirm-check.is-locked input[type="checkbox"] {
+    cursor: not-allowed;
+}
+
+.confirm-cooldown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.confirm-cooldown .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: var(--md-sys-color-error);
+}
+.confirm-check input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0.1rem 0 0;
+    accent-color: var(--md-sys-color-error);
+    cursor: pointer;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.btn--danger {
+    background-color: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error, #fff);
+}
+.btn--danger:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-error), black 10%);
+}
+.btn--danger:disabled {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 88%);
+    color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 62%);
+    box-shadow: none;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ---------- 移动端优化 ---------- */
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 0 1rem;
+        padding: 0 1rem 1rem;
+    }
+    .modal-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    .modal-actions .btn {
+        justify-content: center;
+    }
+}

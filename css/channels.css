@@ -1,0 +1,212 @@
+/* ===========================================================
+   更新通道 / 下载 / Nightly / 镜像状态
+   =========================================================== */
+
+/* ---------- 通道色板 ---------- */
+:root {
+    --icc-stable: #2e7d32;
+    --icc-stable-bg: #e6f4ea;
+    --icc-preview: #1565c0;
+    --icc-preview-bg: #e3f0fd;
+    --icc-beta: #6d3bd4;
+    --icc-beta-bg: #eee7fd;
+    --icc-nightly: #b3261e;
+    --icc-nightly-bg: #fceceb;
+}
+
+html.dark {
+    --icc-stable: #8fd99a;
+    --icc-stable-bg: #17301b;
+    --icc-preview: #9ecbff;
+    --icc-preview-bg: #10243a;
+    --icc-beta: #cdb4ff;
+    --icc-beta-bg: #241a3d;
+    --icc-nightly: #ffb4ab;
+    --icc-nightly-bg: #3a1512;
+}
+
+/* ---------- 通道切换按钮 ---------- */
+.segmented-btn-badge {
+    margin-left: 0.25rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+/* 选中的通道按钮使用该通道自身的配色 */
+.segmented-btn--stable.is-active {
+    background-color: var(--icc-stable-bg);
+    color: var(--icc-stable);
+}
+.segmented-btn--preview.is-active {
+    background-color: var(--icc-preview-bg);
+    color: var(--icc-preview);
+}
+.segmented-btn--beta.is-active {
+    background-color: var(--icc-beta-bg);
+    color: var(--icc-beta);
+}
+.segmented-btn--nightly.is-active {
+    background-color: var(--icc-nightly-bg);
+    color: var(--icc-nightly);
+}
+
+/* 未选中时图标也带一点通道色，便于区分 */
+.segmented-btn--stable .material-symbols-outlined { color: var(--icc-stable); }
+.segmented-btn--preview .material-symbols-outlined { color: var(--icc-preview); }
+.segmented-btn--beta .material-symbols-outlined { color: var(--icc-beta); }
+.segmented-btn--nightly .material-symbols-outlined { color: var(--icc-nightly); }
+
+.segmented-btn.is-active .segmented-btn-badge {
+    background-color: currentColor;
+    color: var(--md-sys-color-surface);
+}
+
+@media (max-width: 560px) {
+    .segmented-btn-badge { display: none; }
+}
+
+/* ---------- 通道说明 ---------- */
+.channel-desc {
+    border-left: 3px solid var(--md-sys-color-outline);
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 96%);
+}
+
+.channel-desc--stable { border-left-color: var(--icc-stable); background-color: var(--icc-stable-bg); }
+.channel-desc--preview { border-left-color: var(--icc-preview); background-color: var(--icc-preview-bg); }
+.channel-desc--beta { border-left-color: var(--icc-beta); background-color: var(--icc-beta-bg); }
+.channel-desc--nightly { border-left-color: var(--icc-nightly); background-color: var(--icc-nightly-bg); }
+
+.channel-desc--stable > .material-symbols-outlined { color: var(--icc-stable); }
+.channel-desc--preview > .material-symbols-outlined { color: var(--icc-preview); }
+.channel-desc--beta > .material-symbols-outlined { color: var(--icc-beta); }
+.channel-desc--nightly > .material-symbols-outlined { color: var(--icc-nightly); }
+
+.channel-desc-extra {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    opacity: 0.85;
+}
+
+.channel-desc-extra .material-symbols-outlined { font-size: 1rem; }
+
+/* ---------- 通道 chip ---------- */
+.chip--channel {
+    border: none;
+    font-weight: 500;
+}
+
+.chip--stable { background-color: var(--icc-stable-bg); color: var(--icc-stable); }
+.chip--preview { background-color: var(--icc-preview-bg); color: var(--icc-preview); }
+.chip--beta { background-color: var(--icc-beta-bg); color: var(--icc-beta); }
+.chip--nightly { background-color: var(--icc-nightly-bg); color: var(--icc-nightly); }
+
+/* ---------- 镜像状态 ---------- */
+.mirror-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.mirror-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 92%);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.mirror-tag .material-symbols-outlined { font-size: 0.95rem; }
+.mirror-tag--ok { color: var(--icc-stable); background-color: var(--icc-stable-bg); }
+.mirror-tag--off { color: var(--md-sys-color-on-surface-variant); }
+
+/* ---------- 下载按钮补充 ---------- */
+.download-btn-version {
+    margin-left: 0.25rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    background-color: color-mix(in srgb, var(--md-sys-color-primary), transparent 88%);
+    color: var(--md-sys-color-primary);
+}
+
+.download-btn-tag {
+    padding: 0.05rem 0.3rem;
+    border-radius: 0.3rem;
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 90%);
+}
+
+/* ---------- Nightly ---------- */
+.release-item--nightly {
+    border: 1px solid color-mix(in srgb, var(--icc-nightly), transparent 70%);
+}
+
+.nightly-run {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem 1rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 95%);
+}
+
+.nightly-run-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--md-sys-color-on-surface-variant);
+    min-width: 0;
+}
+
+.nightly-run-item .material-symbols-outlined { font-size: 1rem; }
+.nightly-run-title { grid-column: 1 / -1; }
+.nightly-run-title span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nightly-proxy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.proxy-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.proxy-chip {
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--md-sys-color-outline);
+    background: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.proxy-chip:hover { background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 92%); }
+
+.proxy-chip.is-active {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-color: transparent;
+}
+
+/* 下载弹窗的通用样式见 css/modal.css，此处仅保留通道相关的 chip 配色 */

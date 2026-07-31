@@ -13,9 +13,17 @@
         href="https://gstatic.aby.pub/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://miweather.edicdn.eu.org/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/releases.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/markdown.css">
+    <link rel="stylesheet" href="css/channels.css">
 
     <script src="https://miweather.edicdn.eu.org/https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
 </head>
@@ -113,9 +121,12 @@
                     <span class="material-symbols-outlined">history</span>
                     <span>发布版本</span>
                 </h2>
-                <button id="toggle-beta" class="btn btn--tonal"></button>
+                <div id="channel-switch" class="segmented-buttons" role="tablist" aria-label="更新通道"></div>
             </div>
+            <p id="channel-desc" class="typescale-body-medium channel-desc"></p>
+            <div id="mirror-status" class="mirror-status"></div>
             <div id="release-loading" class="release-loader-container">
+
                 <div class="loader"></div>
                 <p>正在检测镜像源并获取最新版本...</p>
             </div>
@@ -226,22 +237,50 @@
         </div>
     </footer>
 
-    <script src="./main.js"></script>
-    <!-- 下载弹窗 HTML结构 -->
+    <!-- 下载弹窗 -->
     <div id="download-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="typescale-title-large">感谢下载</h2>
+                <h2 id="modal-title" class="typescale-title-large">感谢下载</h2>
                 <button id="close-modal" class="btn btn--icon">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p id="thank-you-text" class="typescale-body-large">感谢您下载 InkCanvasforClass-Community</p>
-                <p class="typescale-body-medium">您的下载将会在 <span id="countdown" class="countdown-number">5</span> 秒钟后开始</p>
-                <p id="manual-download-tip" class="typescale-body-medium" style="margin-bottom: 0; display: none;">
-                    如果没有开始，请 <a id="manual-download" href="#" class="link">单击此处</a>
-                </p>
+                <p id="thank-you-text" class="typescale-body-large">感谢您下载 InkCanvasForClass CE</p>
+                <div class="modal-meta">
+                    <span id="modal-channel" class="chip chip--channel"></span>
+                    <span id="modal-file" class="modal-file"></span>
+                </div>
+                <div id="modal-warning" class="md-alert md-alert--warning" style="display: none;">
+                    <div class="md-alert-title">
+                        <span class="material-symbols-outlined">warning</span><span>注意</span>
+                    </div>
+                    <div class="md-alert-body"></div>
+                </div>
+                <div id="modal-auto">
+                    <p class="typescale-body-medium">您的下载将会在 <span id="countdown" class="countdown-number">5</span> 秒钟后开始</p>
+                    <p id="manual-download-tip" class="typescale-body-medium" style="margin-bottom: 0; display: none;">
+                        如果没有开始，请 <a id="manual-download" href="#" class="link">单击此处</a>
+                    </p>
+                </div>
+                <div id="modal-confirm" class="modal-confirm" style="display: none;">
+                    <p id="confirm-cooldown" class="confirm-cooldown typescale-body-medium">
+                        <span class="material-symbols-outlined">hourglass_top</span>
+                        <span>请先阅读上方风险说明，<span id="confirm-cooldown-count" class="countdown-number">10</span> 秒后方可继续操作</span>
+                    </p>
+                    <label id="confirm-check" class="confirm-check is-locked">
+                        <input type="checkbox" id="confirm-risk" disabled>
+                        <span class="typescale-body-medium">我已阅读并理解上述风险，仍要下载此构建</span>
+                    </label>
+                    <div class="modal-actions">
+                        <button type="button" id="confirm-cancel" class="btn btn--text">取消</button>
+                        <button type="button" id="confirm-download" class="btn btn--filled btn--danger" disabled>
+                            <span class="material-symbols-outlined">download</span>
+                            <span>继续下载</span>
+                        </button>
+                    </div>
+                </div>
                 <div class="help-section">
                     <span class="material-symbols-outlined">help</span>
                     <span>第一次使用？<a id="docs-link" href="https://inkcanvasforclass.github.io/website/guide/getting-started" target="_blank" class="link">看看这个！</a></span>
@@ -249,6 +288,14 @@
             </div>
         </div>
     </div>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/markdown.js"></script>
+    <script src="./js/network.js"></script>
+    <script src="./js/releases.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/app.js"></script>
 </body>
+
 
 </html>

@@ -1,0 +1,89 @@
+/* ===========================================================
+   设计令牌：字体、配色（亮/暗）、字号、过渡
+   =========================================================== */
+
+@import url('https://gstatic.aby.pub/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+    /* Color Palette (Light Theme) */
+    --md-sys-color-primary: #0061a4;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #d1e4ff;
+    --md-sys-color-on-primary-container: #001d36;
+    --md-sys-color-secondary: #535f70;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #d7e3f7;
+    --md-sys-color-on-secondary-container: #101c2b;
+    --md-sys-color-tertiary: #6b5778;
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: #f2daff;
+    --md-sys-color-on-tertiary-container: #251431;
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-on-error: #ffffff;
+    --md-sys-color-error-container: #ffdad6;
+    --md-sys-color-on-error-container: #410002;
+    --md-sys-color-background: #fdfcff;
+    --md-sys-color-on-background: #1a1c1e;
+    --md-sys-color-surface: #fdfcff;
+    --md-sys-color-on-surface: #1a1c1e;
+    --md-sys-color-surface-variant: #dfe3eb;
+    --md-sys-color-on-surface-variant: #42474e;
+    --md-sys-color-outline: #73777f;
+    --md-sys-color-outline-variant: #c2c7cf;
+    --md-sys-color-shadow: #000000;
+    --md-sys-color-surface-container-lowest: #ffffff;
+    --md-sys-color-surface-container-low: #f7f9fc;
+    --md-sys-color-surface-container: #f1f4f7;
+    --md-sys-color-surface-container-high: #ebeef1;
+    --md-sys-color-surface-container-highest: #e6e8eb;
+
+    /* Typography */
+    --md-sys-typescale-font-family: 'Noto Sans SC', sans-serif;
+    --md-sys-typescale-display-large-size: 3.5625rem;
+    --md-sys-typescale-display-medium-size: 2.8125rem;
+    --md-sys-typescale-headline-large-size: 2rem;
+    --md-sys-typescale-headline-medium-size: 1.75rem;
+    --md-sys-typescale-title-large-size: 1.375rem;
+    --md-sys-typescale-title-medium-size: 1rem;
+    --md-sys-typescale-label-large-size: 0.875rem;
+    --md-sys-typescale-body-large-size: 1rem;
+    --md-sys-typescale-body-medium-size: 0.875rem;
+
+    /* Transitions */
+    --transition-duration: 0.3s;
+    --transition-timing: ease-in-out;
+}
+
+html.dark {
+    /* Color Palette (Dark Theme) */
+    --md-sys-color-primary: #9ecaff;
+    --md-sys-color-on-primary: #003258;
+    --md-sys-color-primary-container: #00497d;
+    --md-sys-color-on-primary-container: #d1e4ff;
+    --md-sys-color-secondary: #bac7db;
+    --md-sys-color-on-secondary: #253140;
+    --md-sys-color-secondary-container: #3b4858;
+    --md-sys-color-on-secondary-container: #d7e3f7;
+    --md-sys-color-tertiary: #d6bee4;
+    --md-sys-color-on-tertiary: #3b2948;
+    --md-sys-color-tertiary-container: #523f5f;
+    --md-sys-color-on-tertiary-container: #f2daff;
+    --md-sys-color-error: #ffb4ab;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000a;
+    --md-sys-color-on-error-container: #ffdad6;
+    --md-sys-color-background: #1a1c1e;
+    --md-sys-color-on-background: #e2e2e6;
+    --md-sys-color-surface: #1a1c1e;
+    --md-sys-color-on-surface: #e2e2e6;
+    --md-sys-color-surface-variant: #42474e;
+    --md-sys-color-on-surface-variant: #c2c7cf;
+    --md-sys-color-outline: #8c9199;
+    --md-sys-color-outline-variant: #42474e;
+    --md-sys-color-shadow: #000000;
+    --md-sys-color-surface-container-lowest: #141619;
+    --md-sys-color-surface-container-low: #1a1c1e;
+    --md-sys-color-surface-container: #1e2022;
+    --md-sys-color-surface-container-high: #282b2d;
+    --md-sys-color-surface-container-highest: #333638;
+}
