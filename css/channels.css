@@ -15,15 +15,17 @@
 }
 
 html.dark {
-    --icc-stable: #8fd99a;
-    --icc-stable-bg: #17301b;
-    --icc-preview: #9ecbff;
-    --icc-preview-bg: #10243a;
-    --icc-beta: #cdb4ff;
-    --icc-beta-bg: #241a3d;
-    --icc-nightly: #ffb4ab;
-    --icc-nightly-bg: #3a1512;
+    /* 深色下不用高亮度粉彩，压暗一档，避免大面积色块刺眼 */
+    --icc-stable: #6fb87c;
+    --icc-stable-bg: #16281a;
+    --icc-preview: #7aa9dd;
+    --icc-preview-bg: #131f2e;
+    --icc-beta: #a98fdc;
+    --icc-beta-bg: #1f1830;
+    --icc-nightly: #d98d85;
+    --icc-nightly-bg: #2e1614;
 }
+
 
 /* ---------- 通道切换按钮 ---------- */
 .segmented-btn-badge {
@@ -36,48 +38,33 @@ html.dark {
     color: var(--md-sys-color-on-primary);
 }
 
+/* 每个按钮先声明自己所属通道的一对颜色，下面的规则统一引用 */
+.segmented-btn--stable { --icc-ch: var(--icc-stable); --icc-ch-bg: var(--icc-stable-bg); }
+.segmented-btn--preview { --icc-ch: var(--icc-preview); --icc-ch-bg: var(--icc-preview-bg); }
+.segmented-btn--beta { --icc-ch: var(--icc-beta); --icc-ch-bg: var(--icc-beta-bg); }
+.segmented-btn--nightly { --icc-ch: var(--icc-nightly); --icc-ch-bg: var(--icc-nightly-bg); }
+
 /* 选中的通道按钮使用该通道自身的配色 */
-.segmented-btn--stable.is-active {
-    background-color: var(--icc-stable-bg);
-    color: var(--icc-stable);
-}
-.segmented-btn--preview.is-active {
-    background-color: var(--icc-preview-bg);
-    color: var(--icc-preview);
-}
-.segmented-btn--beta.is-active {
-    background-color: var(--icc-beta-bg);
-    color: var(--icc-beta);
-}
-.segmented-btn--nightly.is-active {
-    background-color: var(--icc-nightly-bg);
-    color: var(--icc-nightly);
+.segmented-btn.is-active {
+    background-color: var(--icc-ch-bg);
+    color: var(--icc-ch);
 }
 
 /* 未选中时图标也带一点通道色，便于区分 */
-.segmented-btn--stable .material-symbols-outlined { color: var(--icc-stable); }
-.segmented-btn--preview .material-symbols-outlined { color: var(--icc-preview); }
-.segmented-btn--beta .material-symbols-outlined { color: var(--icc-beta); }
-.segmented-btn--nightly .material-symbols-outlined { color: var(--icc-nightly); }
+.segmented-btn .material-symbols-outlined { color: var(--icc-ch); }
 
-/* 「推荐」角标固定使用所属通道的深/浅配对色，
-   这样在选中（通道底色）与未选中（灰底）两种状态下对比度都足够 */
-.segmented-btn--stable .segmented-btn-badge {
-    background-color: var(--icc-stable);
-    color: var(--icc-stable-bg);
+/* 「推荐」角标：实心通道色 + 反底文字 */
+.segmented-btn .segmented-btn-badge {
+    background-color: var(--icc-ch);
+    color: var(--icc-ch-bg);
 }
-.segmented-btn--preview .segmented-btn-badge {
-    background-color: var(--icc-preview);
-    color: var(--icc-preview-bg);
+
+/* 深色模式下实心色块太扎眼，改成半透明底 + 通道色文字 */
+html.dark .segmented-btn .segmented-btn-badge {
+    background-color: color-mix(in srgb, var(--icc-ch), transparent 80%);
+    color: var(--icc-ch);
 }
-.segmented-btn--beta .segmented-btn-badge {
-    background-color: var(--icc-beta);
-    color: var(--icc-beta-bg);
-}
-.segmented-btn--nightly .segmented-btn-badge {
-    background-color: var(--icc-nightly);
-    color: var(--icc-nightly-bg);
-}
+
 
 @media (max-width: 560px) {
     .segmented-btn-badge { display: none; }
@@ -89,15 +76,16 @@ html.dark {
     background-color: color-mix(in srgb, var(--md-sys-color-on-surface), transparent 96%);
 }
 
-.channel-desc--stable { border-left-color: var(--icc-stable); background-color: var(--icc-stable-bg); }
-.channel-desc--preview { border-left-color: var(--icc-preview); background-color: var(--icc-preview-bg); }
-.channel-desc--beta { border-left-color: var(--icc-beta); background-color: var(--icc-beta-bg); }
-.channel-desc--nightly { border-left-color: var(--icc-nightly); background-color: var(--icc-nightly-bg); }
+.channel-desc--stable { --icc-ch: var(--icc-stable); --icc-ch-bg: var(--icc-stable-bg); }
+.channel-desc--preview { --icc-ch: var(--icc-preview); --icc-ch-bg: var(--icc-preview-bg); }
+.channel-desc--beta { --icc-ch: var(--icc-beta); --icc-ch-bg: var(--icc-beta-bg); }
+.channel-desc--nightly { --icc-ch: var(--icc-nightly); --icc-ch-bg: var(--icc-nightly-bg); }
 
-.channel-desc--stable > .material-symbols-outlined { color: var(--icc-stable); }
-.channel-desc--preview > .material-symbols-outlined { color: var(--icc-preview); }
-.channel-desc--beta > .material-symbols-outlined { color: var(--icc-beta); }
-.channel-desc--nightly > .material-symbols-outlined { color: var(--icc-nightly); }
+.channel-desc[class*="channel-desc--"] {
+    border-left-color: var(--icc-ch);
+    background-color: var(--icc-ch-bg);
+}
+.channel-desc[class*="channel-desc--"] > .material-symbols-outlined { color: var(--icc-ch); }
 
 .channel-desc-extra {
     display: inline-flex;
@@ -111,15 +99,17 @@ html.dark {
 .channel-desc-extra .material-symbols-outlined { font-size: 1rem; }
 
 /* ---------- 通道 chip ---------- */
+.chip--stable { --icc-ch: var(--icc-stable); --icc-ch-bg: var(--icc-stable-bg); }
+.chip--preview { --icc-ch: var(--icc-preview); --icc-ch-bg: var(--icc-preview-bg); }
+.chip--beta { --icc-ch: var(--icc-beta); --icc-ch-bg: var(--icc-beta-bg); }
+.chip--nightly { --icc-ch: var(--icc-nightly); --icc-ch-bg: var(--icc-nightly-bg); }
+
 .chip--channel {
     border: none;
     font-weight: 500;
+    background-color: var(--icc-ch-bg);
+    color: var(--icc-ch);
 }
-
-.chip--stable { background-color: var(--icc-stable-bg); color: var(--icc-stable); }
-.chip--preview { background-color: var(--icc-preview-bg); color: var(--icc-preview); }
-.chip--beta { background-color: var(--icc-beta-bg); color: var(--icc-beta); }
-.chip--nightly { background-color: var(--icc-nightly-bg); color: var(--icc-nightly); }
 
 /* ---------- 镜像状态 ---------- */
 .mirror-status {
@@ -142,6 +132,9 @@ html.dark {
 
 .mirror-tag .material-symbols-outlined { font-size: 0.95rem; }
 .mirror-tag--ok { color: var(--icc-stable); background-color: var(--icc-stable-bg); }
+html.dark .mirror-tag--ok {
+    background-color: color-mix(in srgb, var(--icc-stable), transparent 88%);
+}
 .mirror-tag--off { color: var(--md-sys-color-on-surface-variant); }
 
 /* ---------- 下载按钮补充 ---------- */
