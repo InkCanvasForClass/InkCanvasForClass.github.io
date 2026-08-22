@@ -112,6 +112,24 @@ window.ICC = window.ICC || {};
         dom.modalAuto.style.display = needConfirm ? "none" : "";
         dom.modalConfirm.style.display = needConfirm ? "" : "none";
 
+        var downloadUrl = info.url;
+        dom.githubSourcePicker.style.display = !needConfirm && info.useGithub ? "flex" : "none";
+        if (!needConfirm && info.useGithub) {
+            var mirrors = ICC.network.state.githubMirrors;
+            dom.githubSourceSelect.innerHTML = mirrors.map(function (mirror) {
+                var label = mirror.prefix ? mirror.prefix.replace(/^https?:\/\//, "") : "GitHub 官方直连";
+                return '<option value="' + ICC.markdown.escapeHtml(mirror.prefix || "") + '">' +
+                    ICC.markdown.escapeHtml(label + " · " + Math.round(mirror.cost) + " ms") + "</option>";
+            }).join("");
+            dom.githubSourceSelect.value = ICC.network.state.selectedMirror || "";
+            dom.githubSourceSelect.onchange = function () {
+                ICC.network.selectMirror(dom.githubSourceSelect.value || null);
+                downloadUrl = ICC.network.toMirrorUrl(info.originalUrl);
+                dom.manualDownload.href = downloadUrl;
+            };
+            if (!mirrors.length) dom.githubSourcePicker.style.display = "none";
+        }
+
         if (needConfirm) {
             dom.modalTitle.textContent = info.warningTitle || "确认下载风险";
             dom.thankYou.textContent = "您即将下载 InkCanvasForClass CE " + info.title;
@@ -145,7 +163,7 @@ window.ICC = window.ICC || {};
         var count = 5;
         var started = false;
         dom.countdown.textContent = count;
-        dom.manualDownload.href = info.url;
+        dom.manualDownload.href = downloadUrl;
         dom.manualTip.style.display = "none";
 
         dom.modal.classList.add("is-open");
@@ -155,7 +173,7 @@ window.ICC = window.ICC || {};
             dom.countdown.textContent = Math.max(count, 0);
             if (count <= 0) {
                 clearInterval(countdownTimer);
-                if (!started) { started = true; triggerDownload(info.url); }
+                if (!started) { started = true; triggerDownload(downloadUrl); }
                 dom.manualTip.style.display = "";
             }
         }, 1000);

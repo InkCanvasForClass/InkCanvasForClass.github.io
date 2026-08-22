@@ -38,12 +38,35 @@ window.ICC = window.ICC || {};
 
         // GitHub Release / API 通用加速镜像
         MIRROR_URLS: [
+            "https://github.akams.cn",
             "https://gh.llkk.cc",
             "https://ghfile.geekertao.top",
             "https://gh.dpik.top",
             "https://github.dpik.top",
             "https://github.acmsz.top",
-            "https://git.yylx.win"
+            "https://git.yylx.win",
+            "https://github.tbap.top",
+            "https://ghproxy.net",
+            "https://gh-proxy.com",
+            "https://gh-proxy.net",
+            "https://cdn.gh-proxy.com",
+            "https://j.1lin.dpdns.org",
+            "https://github.starrlzy.cn",
+            "https://github-proxy.memory-echoes.cn",
+            "https://tvv.tw",
+            "https://j.1win.ggff.net",
+            "https://gitproxy.127731.xyz",
+            "https://gh.inkchills.cn",
+            "https://gh.catmak.name",
+            "https://gh.b52m.cn",
+            "https://down.mxw.xx.kg",
+            "https://githubdog.com",
+            "https://gh.meali.top",
+            "https://xsadwsd.kdns.fr",
+            "https://gh.ruan.dpdns.org",
+            "https://ghproxy.felicity.land",
+            "https://github.nswrz.cn",
+            "https://gh.zhai.edu.pl"
         ],
 
         // Nightly（CI 构建）配置

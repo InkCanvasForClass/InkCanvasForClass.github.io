@@ -10,6 +10,8 @@ window.ICC = window.ICC || {};
 
     var state = {
         fastestMirror: null,        // GitHub 加速前缀，如 https://gh.llkk.cc
+        selectedMirror: null,       // 当前下载选中的 GitHub 前缀，null 表示官方直连
+        githubMirrors: [],          // 延迟小于 2 秒的可用下载源
         smartTeachAvailable: false, // 智教联盟镜像是否可用
         nightlyProxy: null          // Nightly 使用的加速前缀配置项
     };
@@ -59,7 +61,12 @@ window.ICC = window.ICC || {};
         var results = await Promise.all(candidates.map(function (c) {
             var start = performance.now();
             return timeoutFetch(c.url, { method: "HEAD" })
-                .then(function () { return { prefix: c.prefix, cost: performance.now() - start }; })
+                .then(function (res) {
+                    return {
+                        prefix: c.prefix,
+                        cost: res.ok ? performance.now() - start : Infinity
+                    };
+                })
                 .catch(function () { return { prefix: c.prefix, cost: Infinity }; });
         }));
 
@@ -67,6 +74,8 @@ window.ICC = window.ICC || {};
             .sort(function (a, b) { return a.cost - b.cost; });
 
         state.fastestMirror = usable.length ? usable[0].prefix : null;
+        state.githubMirrors = usable.filter(function (r) { return r.cost < 2000; });
+        state.selectedMirror = state.githubMirrors.length ? state.githubMirrors[0].prefix : null;
         return state.fastestMirror;
     }
 
@@ -111,10 +120,17 @@ window.ICC = window.ICC || {};
 
     /** 套用 GitHub 加速前缀 */
     function toMirrorUrl(url) {
-        if (state.fastestMirror && url.indexOf("https://github.com/") === 0) {
-            return state.fastestMirror + "/" + url;
+        if (state.selectedMirror && url.indexOf("https://github.com/") === 0) {
+            return state.selectedMirror + "/" + url;
         }
         return url;
+    }
+
+    /** 切换当前下载使用的 GitHub 源 */
+    function selectMirror(prefix) {
+        var valid = state.githubMirrors.some(function (mirror) { return mirror.prefix === prefix; });
+        if (prefix === null || valid) state.selectedMirror = prefix;
+        return state.selectedMirror;
     }
 
     /** 构造智教联盟下载地址（按资源所属仓库分目录） */
@@ -126,8 +142,19 @@ window.ICC = window.ICC || {};
     /** 检查智教联盟上是否存在该文件 */
     async function smartTeachHasFile(url, repo) {
         try {
-            var res = await timeoutFetch(toSmartTeachUrl(url, repo), { method: "HEAD" });
-            return res.status === 200 || res.status === 302 || res.status === 403;
+            var res = await timeoutFetch(toSmartTeachUrl(url, repo), {
+                method: "GET",
+                headers: { Range: "bytes=0-0" }
+            });
+            if (!res.ok) return false;
+
+            var contentType = (res.headers.get("content-type") || "").toLowerCase();
+            if (contentType.indexOf("json") !== -1 || contentType.indexOf("text/") === 0) {
+                var data = await res.json().catch(function () { return null; });
+                return !!data && data.code !== 500 && data.message !== "object not found" && data.data !== null;
+            }
+
+            return res.status === 200 || res.status === 206 || res.status === 302;
         } catch (e) {
             return false;
         }
@@ -188,6 +215,7 @@ window.ICC = window.ICC || {};
         detectSmartTeach: detectSmartTeach,
         detectNightlyProxy: detectNightlyProxy,
         toMirrorUrl: toMirrorUrl,
+        selectMirror: selectMirror,
         resolveDownloadUrl: resolveDownloadUrl,
         previewDownloadUrl: previewDownloadUrl,
         nightlyUrl: nightlyUrl,

@@ -43,6 +43,8 @@
             manualTip: document.getElementById("manual-download-tip"),
             thankYou: document.getElementById("thank-you-text"),
             countdown: document.getElementById("countdown"),
+            githubSourcePicker: document.getElementById("github-source-picker"),
+            githubSourceSelect: document.getElementById("github-source-select"),
             docsLink: document.getElementById("docs-link"),
             closeModal: document.getElementById("close-modal"),
             modalAuto: document.getElementById("modal-auto"),
@@ -96,6 +98,8 @@
 
                 ICC.ui.showDownloadModal({
                     url: url,
+                    originalUrl: btn.dataset.originalUrl,
+                    useGithub: url.indexOf(CONFIG.SMART_TEACH_DOMAIN) !== 0,
                     title: btn.dataset.version ? "v" + btn.dataset.version : "",
                     fileName: btn.dataset.name,
                     channel: channel,
