@@ -102,7 +102,7 @@ window.ICC = window.ICC || {};
             theme: "theme"
         },
 
-        DOCS_URL: "https://inkcanvasforclass.github.io/website",
+        DOCS_URL: "https://docs.iccce.ink",
         REQUEST_TIMEOUT: 3000
     };
 
